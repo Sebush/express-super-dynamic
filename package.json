@@ -1,0 +1,25 @@
+{
+  "name": "express-super-dynamic",
+  "version": "0.0.0",
+  "description": "better all-in-one nodejs/expressjs dynamic-req/res-handler with varcache of content, compression (gzip, deflate), content-length-header (optional)",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sebush/express-super-dynamic.git"
+  },
+  "keywords": [
+    "middleware",
+    "expressjs",
+    "dynamic-handler",
+    "express"
+  ],
+  "author": "Sebastian Hähnlein",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sebush/express-super-dynamic/issues"
+  },
+  "homepage": "https://github.com/Sebush/express-super-dynamic#readme",
+  "dependencies": {
+    "underscore": "*"
+  }
+}
