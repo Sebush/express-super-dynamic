@@ -68,6 +68,10 @@ module.exports = function(options){
                         'Content-Type': 'text/html; charset=utf-8'
                     };
 
+                    if (req.headers['if-none-match'] === headers.ETag) {
+                        return res.status(304).end();
+                    }
+
                     if(options.maxAge){
                       headers['Cache-Control'] = 'public, max-age='+options.maxAge;
                       // headers['Last-Modified'] = req.app.vars['Last-Modified'];
