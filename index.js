@@ -84,7 +84,7 @@ module.exports = function(options){
                     headers['Connection'] = 'keep-alive';
 
                     if(type == 'raw'){
-                        headers['content-length'] = html.length;
+                        headers['Content-Length'] = html.length;
                         if(options.cache){
                             options.cache.set(cacheKey, {
                                 headers: headers,
