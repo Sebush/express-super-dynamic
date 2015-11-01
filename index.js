@@ -29,7 +29,7 @@ module.exports = function(options){
         if(encodingHeader){
             if(encodingHeader.match(/\bgzip\b/)){
                 type = 'gzip';
-            }else if(req.headers['accept-encoding'].match(/\bdeflate\b/)){
+            }else if(encodingHeader.match(/\bdeflate\b/)){
                 type = 'deflate';
             }
         }
@@ -41,7 +41,6 @@ module.exports = function(options){
                 var self = this;
                 var template = null;
                 var renderOptions = {};
-                var cb = undefined;
 
                 if(req.isAjax && req.get('Accept') == 'application/json, text/javascript, */*; q=0.01'){
                     return res.json({arguments: arguments});
@@ -49,9 +48,7 @@ module.exports = function(options){
 
                 if(typeof arguments[0] == 'string'){
                     template = arguments[0];
-                }
-
-                if(typeof arguments[0] == 'object' && arguments[0]._layout){
+                }else if(typeof arguments[0] == 'object' && arguments[0]._layout){
                     template = arguments[0]._layout;
                 }
 
