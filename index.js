@@ -43,7 +43,10 @@ module.exports = function(options){
                 var renderOptions = {};
 
                 if(req.isAjax && req.get('Accept') == 'application/json, text/javascript, */*; q=0.01'){
-                    return res.json({arguments: arguments});
+                    return res.json({
+                        template: arguments[0],
+                        data: _.extend(arguments[1] || {}, res.app.locals, res.locals)
+                    });
                 }
 
                 if(typeof arguments[0] == 'string'){
