@@ -13,6 +13,7 @@ var _ = require('underscore'),
 
 module.exports = function(options){
     options = _.extend({
+        status: 200,
         maxAge: 0,
         chunked: false,
         cache: false,  // express-super-cache
@@ -91,7 +92,7 @@ module.exports = function(options){
                                 content: html
                             });
                         }
-                        res.writeHead(200, headers);
+                        res.writeHead(options.status, headers);
                         return res.end(html);
                     }
 
@@ -109,7 +110,7 @@ module.exports = function(options){
                             });
                         }
 
-                        res.writeHead(200, headers);
+                        res.writeHead(options.status, headers);
                         res.end(result);
                     });
                 });
@@ -128,7 +129,7 @@ module.exports = function(options){
                         return res.status(304).end();
                     }else{
                         // console.log(item.headers);
-                        res.writeHead(200, item.headers);
+                        res.writeHead(options.status, item.headers);
                         return res.end(Buffer(item.content));
                     }
                 }else{
