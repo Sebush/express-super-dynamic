@@ -34,7 +34,8 @@ module.exports = function(options){
                 type = 'deflate';
             }
         }
-        var cacheKey = options.cachePrefix+req.url+':'+type;
+        var jsonBool = req.isAjax && (req.get('Accept') == 'application/json, text/javascript, */*; q=0.01' || req.get('Accept') == '*/*');
+        var cacheKey = options.cachePrefix+req.url+':'+type+':'+jsonBool;
 
         var _fn = function(){
             res.dynamic = function() {
@@ -43,7 +44,7 @@ module.exports = function(options){
                 var template = null;
                 var renderOptions = {};
 
-                if(req.isAjax && (req.get('Accept') == 'application/json, text/javascript, */*; q=0.01' || req.get('Accept') == '*/*')){
+                if(jsonBool){
                     return res.json({
                         template: arguments[0],
                         data: _.extend(arguments[1] || {}, res.app.locals, res.locals)
