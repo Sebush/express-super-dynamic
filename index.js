@@ -43,7 +43,7 @@ module.exports = function(options){
                 var template = null;
                 var renderOptions = {};
 
-                if(req.isAjax && req.get('Accept') == 'application/json, text/javascript, */*; q=0.01'){
+                if(req.isAjax && (req.get('Accept') == 'application/json, text/javascript, */*; q=0.01' || req.get('Accept') == '*/*')){
                     return res.json({
                         template: arguments[0],
                         data: _.extend(arguments[1] || {}, res.app.locals, res.locals)
