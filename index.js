@@ -47,7 +47,7 @@ module.exports = function(options){
                 if(jsonBool){
                     return res.json({
                         template: arguments[0],
-                        data: _.extend(arguments[1] || {}, res.app.locals, res.locals)
+                        data: _.extend({}, res.app.locals, res.locals, arguments[1] || {})
                     });
                 }
 
