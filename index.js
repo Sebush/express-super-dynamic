@@ -1,4 +1,5 @@
 var _ = require('underscore'),
+    minify = require('html-minifier').minify,
     zlib = require('zlib'),
     listeners = [],
     dictCache = {
@@ -65,6 +66,17 @@ module.exports = function(options){
                     if(err){
                         return console.error(err, err.stack);
                     }
+
+                    html = minify(html, {
+                        removeComments: true,
+                        collapseWhitespace: true,
+                        conservativeCollapse: true,
+                        preserveLineBreaks: true,
+                        removeRedundantAttributes: true,
+                        removeEmptyAttributes: true,
+                        // removeAttributeQuotes: true,
+                    });
+
                     var headers = {
                         'ETag': ''+html.length,
                         'Content-Type': 'text/html; charset=utf-8'

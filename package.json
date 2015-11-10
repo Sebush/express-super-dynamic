@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Sebush/express-super-dynamic#readme",
   "dependencies": {
-    "underscore": "*"
+    "underscore": "*",
+    "html-minifier": "*"
   }
 }
