@@ -1,5 +1,4 @@
 var _ = require('underscore'),
-    minify = require('html-minifier').minify,
     zlib = require('zlib'),
     listeners = [],
     dictCache = {
@@ -75,17 +74,20 @@ module.exports = function(options){
                         return cb && cb(err);
                     }
 
-                    console.time('bench html-minify');
-                    html = minify(html, {
-                        removeComments: true,
-                        collapseWhitespace: true,
-                        conservativeCollapse: true,
-                        preserveLineBreaks: true,
-                        removeRedundantAttributes: true,
-                        removeEmptyAttributes: true,
-                        // removeAttributeQuotes: true,
-                    });
-                    console.timeEnd('bench html-minify');
+                    // var l1 = html.length;
+                    // console.time('bench html-minify');
+
+                    // Clean comments
+                    // html = html.replace(/<!--([^\[|(<!)].*)/g, '');
+                    // html = html.replace(/<!\S\/\/\s*[^\r\n]*/g, '');
+                    html = html.replace(/<!--(?!\s*?\[\s*?if)[\s\S]*?-->/gi, '');
+                    // Clean Whitespace
+                    html = html.replace(/\s{2,}/g, '');
+                    html = html.replace(/(\r?\n)/g, '');
+
+                    // console.timeEnd('bench html-minify');
+                    // var l2 = html.length;
+                    // console.log('html size', l1, l2, (100/l1)*l2);
 
                     if(cb) return cb(err, html);
 
