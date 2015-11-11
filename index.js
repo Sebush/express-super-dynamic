@@ -85,7 +85,10 @@ module.exports = function(options){
                     // console.time('bench html-minify');
 
                     // Clean comments & Whitespace
-                    html = html.replace(/<!--(?!\s*?\[\s*?if)[\s\S]*?-->/gi, '').replace(/\s{2,}/g, '').replace(/(\r?\n)+/g, '\n');
+                    html = html.replace(/<!--(?!\s*?\[\s*?if)[\s\S]*?-->/gi, '')
+                               .replace(/(^\s+|\s+$)/gim,'')
+                               .replace(/(\r?\n)+/g, '\n')
+                               .replace(/>(\r?\n|\s+)</g, '><');
 
                     // console.timeEnd('bench html-minify');
                     // var l2 = html.length;
