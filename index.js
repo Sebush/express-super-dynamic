@@ -84,13 +84,8 @@ module.exports = function(options){
                     // var l1 = html.length;
                     // console.time('bench html-minify');
 
-                    // Clean comments
-                    // html = html.replace(/<!--([^\[|(<!)].*)/g, '');
-                    // html = html.replace(/<!\S\/\/\s*[^\r\n]*/g, '');
-                    html = html.replace(/<!--(?!\s*?\[\s*?if)[\s\S]*?-->/gi, '');
-                    // Clean Whitespace
-                    html = html.replace(/\s{2,}/g, '');
-                    html = html.replace(/(\r?\n)+/g, '\n');
+                    // Clean comments & Whitespace
+                    html = html.replace(/<!--(?!\s*?\[\s*?if)[\s\S]*?-->/gi, '').replace(/\s{2,}/g, '').replace(/(\r?\n)+/g, '\n');
 
                     // console.timeEnd('bench html-minify');
                     // var l2 = html.length;
@@ -113,7 +108,7 @@ module.exports = function(options){
                     }else{
                       headers['Cache-Control'] = 'public, max-age=0';
                     }
-                    headers['X-UA-Compatible'] = 'IE=edge,chrome=1';
+                    // headers['X-UA-Compatible'] = 'IE=edge,chrome=1';
                     headers['Vary'] = 'Accept-Encoding';
                     // headers['transfer-encoding'] = '';
                     headers['Connection'] = 'keep-alive';
