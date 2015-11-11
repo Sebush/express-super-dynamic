@@ -41,9 +41,10 @@ module.exports = function(options){
         var _fn = function(){
             res.dynamic = function() {
 
-                var self = this;
-                var template = null;
-                var renderOptions = {};
+                var self = this,
+                    template = null,
+                    renderOptions = {},
+                    cb = null;
 
                 if(jsonBool){
                     return res.json({
@@ -60,13 +61,21 @@ module.exports = function(options){
 
                 if(typeof arguments[1] == 'object'){
                     renderOptions = arguments[1];
+                }else if(typeof arguments[1] == 'function'){
+                    cb = arguments[1];
+                }
+
+                if(typeof arguments[2] == 'function'){
+                    cb = arguments[2];
                 }
 
                 res.render(template, renderOptions, function(err, html){
                     if(err){
-                        return console.error(err, err.stack);
+                        console.error(err, err.stack);
+                        return cb && cb(err);
                     }
 
+                    console.time('bench html-minify');
                     html = minify(html, {
                         removeComments: true,
                         collapseWhitespace: true,
@@ -76,6 +85,9 @@ module.exports = function(options){
                         removeEmptyAttributes: true,
                         // removeAttributeQuotes: true,
                     });
+                    console.timeEnd('bench html-minify');
+
+                    if(cb) return cb(err, html);
 
                     var headers = {
                         'ETag': ''+html.length,
@@ -111,7 +123,8 @@ module.exports = function(options){
 
                     zlib[type](new Buffer(html, 'utf-8'), function (err, result) {
                         if(err){
-                            return console.error('zlib', err, err.stack);
+                            console.error('zlib', err, err.stack);
+                            return cb && cb(err);
                         }
                         headers['Content-Encoding'] = type;
                         headers['Content-Length'] = result.length;
