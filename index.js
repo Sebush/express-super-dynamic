@@ -164,7 +164,7 @@ module.exports = function(options){
                 // console.log('// #########################', item);
                 if(err){
                     console.error('express-super-dynamic', err, err.stack);
-                    return cb && cb(err);
+                    // return cb && cb(err);
                 }
                 if(item){
                     // console.log('// #########################', req.headers['if-none-match'] === item.headers.ETag);
