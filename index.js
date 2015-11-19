@@ -45,10 +45,6 @@ module.exports = function(options){
             res.dynamic = function() {
                 // console.timeEnd('bench');
                 // console.log('renderStart');
-                var self = this,
-                    template = null,
-                    renderOptions = {},
-                    cb = null;
 
                 if(jsonBool){
                     return res.json({
@@ -56,6 +52,11 @@ module.exports = function(options){
                         data: _.extend({}, res.app.locals, res.locals, arguments[1] || {})
                     });
                 }
+
+                var self = this,
+                    template = null,
+                    renderOptions = {},
+                    cb = null;
 
                 if(typeof arguments[0] == 'string'){
                     template = arguments[0];
