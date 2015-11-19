@@ -88,7 +88,7 @@ module.exports = function(options){
                     html = html.replace(/<!--(?!\s*?\[\s*?if)[\s\S]*?-->/gi, '')
                                .replace(/(^\s+|\s+$)/gim,'')
                                .replace(/(\r?\n)+/g, '\n')
-                               .replace(/>(\r?\n|\s+)</g, '><');
+                               .replace(/>(\r?\n|\s+)</g, '> <');
 
                     // console.timeEnd('bench html-minify');
                     // var l2 = html.length;
