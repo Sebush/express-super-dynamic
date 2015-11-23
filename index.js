@@ -22,13 +22,6 @@ module.exports = function(options){
         download: false
     }, options || {});
     return function(req, res, next){
-
-        // console.log('------ request -------');
-        // console.time('bench');
-
-        if(req.xhr && req.get('X-Requested-With') == 'XMLHttpRequest'){
-            req.isAjax = true;
-        }
         var type = 'raw';
         var encodingHeader = req.headers['accept-encoding'];
         if(encodingHeader){
@@ -38,19 +31,20 @@ module.exports = function(options){
                 type = 'deflate';
             }
         }
-        var jsonBool = req.isAjax && (req.get('Accept') == 'application/json, text/javascript, */*; q=0.01' || req.get('Accept') == '*/*');
+        var jsonBool = req.xhr && (req.get('Accept') == 'application/json, text/javascript, */*; q=0.01' || req.get('Accept') == '*/*');
         var cacheKey = options.cachePrefix+req.url+':'+type+':'+jsonBool;
 
         var _fn = function(){
             res.dynamic = function() {
-                // console.timeEnd('bench');
-                // console.log('renderStart');
-
                 if(jsonBool){
-                    return res.json({
+                    var result = {
                         template: arguments[0],
                         data: _.extend({}, res.app.locals, res.locals, arguments[1] || {})
-                    });
+                    };
+                    if(options.cache){
+                        options.cache.set(cacheKey, result);
+                    }
+                    return res.json(result);
                 }
 
                 var self = this,
@@ -75,25 +69,16 @@ module.exports = function(options){
                 }
 
                 res.render(template, renderOptions, function(err, html){
-                    // console.timeEnd('bench');
-                    // console.log('renderEnd');
                     if(err){
                         console.error(err, err.stack);
                         return cb && cb(err);
                     }
-
-                    // var l1 = html.length;
-                    // console.time('bench html-minify');
 
                     // Clean comments & Whitespace
                     html = html.replace(/<!--(?!\s*?\[\s*?if)[\s\S]*?-->/gi, '')
                                .replace(/(^\s+|\s+$)/gim,'')
                                .replace(/(\r?\n)+/g, '\n')
                                .replace(/>(\r?\n|\s+)</g, '> <');
-
-                    // console.timeEnd('bench html-minify');
-                    // var l2 = html.length;
-                    // console.log('html size', l1, l2, (100/l1)*l2);
 
                     if(cb) return cb(err, html);
 
@@ -117,9 +102,6 @@ module.exports = function(options){
                     // headers['transfer-encoding'] = '';
                     headers['Connection'] = 'keep-alive';
 
-                    // console.timeEnd('bench');
-                    // console.log('postOut');
-
                     if(type == 'raw'){
                         headers['Content-Length'] = html.length;
                         if(options.cache){
@@ -129,8 +111,6 @@ module.exports = function(options){
                             });
                         }
                         res.writeHead(options.status, headers);
-                        // console.timeEnd('bench');
-                        // console.log('out raw');
                         return res.end(html);
                     }
 
@@ -141,17 +121,13 @@ module.exports = function(options){
                         }
                         headers['Content-Encoding'] = type;
                         headers['Content-Length'] = result.length;
-
                         if(options.cache){
                             options.cache.set(cacheKey, {
                                 headers: headers,
                                 content: result
                             });
                         }
-
                         res.writeHead(options.status, headers);
-                        // console.timeEnd('bench');
-                        // console.log('out gzip');
                         res.end(result);
                     });
                 });
@@ -162,17 +138,15 @@ module.exports = function(options){
 
         if(options.cache){
             options.cache.get(cacheKey, function(err, item){
-                // console.log('// #########################', item);
                 if(err){
                     console.error('express-super-dynamic', err, err.stack);
-                    // return cb && cb(err);
                 }
                 if(item){
-                    // console.log('// #########################', req.headers['if-none-match'] === item.headers.ETag);
-                    if (req.headers['if-none-match'] === item.headers.ETag) {
+                    if(jsonBool){
+                        return res.json(item);
+                    }else if (req.headers['if-none-match'] === item.headers.ETag) {
                         return res.status(304).end();
                     }else{
-                        // console.log(item.headers);
                         res.writeHead(options.status, item.headers);
                         return res.end(Buffer(item.content));
                     }
